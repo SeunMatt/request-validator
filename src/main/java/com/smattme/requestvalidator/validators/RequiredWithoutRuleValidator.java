@@ -19,7 +19,7 @@ public class RequiredWithoutRuleValidator implements RuleValidator {
 
         if (ValidationHelper.noFieldExists(rule.getParameters(), rule.getJsonPathObject())) {
             return ValidationHelper.isValidRequired(value) ? ValidationResult.success() :
-                    ValidationResult.failed("The " + rule.getKey() + " field is required when " + String.join("/", rule.getParameters()) + " is not present");
+                    ValidationResult.failed("The " + rule.getKey() + " field is required when " + String.join(" and ", rule.getParameters()) + " is not present");
         }
 
         //one or more fields do exist so skip and return true

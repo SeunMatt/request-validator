@@ -43,6 +43,7 @@ public class RequestValidator {
 		ruleValidatorMap.put("requiredWithout", RequiredWithoutRuleValidator.class);
 		ruleValidatorMap.put("requiredWithoutAny", RequiredWithoutAnyRuleValidator.class);
 		ruleValidatorMap.put("array", ArrayNotEmptyRuleValidator.class);
+		ruleValidatorMap.put("optional", OptionalRuleValidator.class);
 	}
 
 
@@ -152,7 +153,7 @@ public class RequestValidator {
 
 		//let's extract the supplied value for the key under-processing
 		Object value = getValueForField(document, key);
-		logger.trace("Evaluating rule: {} for Key: {}", ruleString, key);
+		logger.trace("Evaluating rule: {} for Key: {}. Value: {}", ruleString, key, value);
 
 		/*
 			if optional is part of the ruleList for this key, and the request object does not
@@ -166,6 +167,7 @@ public class RequestValidator {
 
 		//convert ruleString to Rule object
 		Rule rule = Rule.parseRule(ruleString, key);
+		rule.setJsonPathObject(document); //this will make the entire request available to validators that may want to check the value of other fields
 
 		//get the validator class for the rule under processing
 		Class<? extends RuleValidator> ruleValidator = ruleValidatorMap.get(rule.getName());

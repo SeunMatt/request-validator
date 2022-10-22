@@ -15,11 +15,12 @@ public class RequiredWithAnyRuleValidator implements RuleValidator {
     @Override
     public ValidationResult isValid(Object value, Rule rule) {
 
-        if (ValidationHelper.anyFieldExists(rule.getParameters(), rule.getJsonPathObject()) && ValidationHelper.isValidRequired(value)) {
+        if (ValidationHelper.anyFieldExists(rule.getParameters(), rule.getJsonPathObject())) {
             //one or more of the parameters exists run validation
-            return ValidationResult.success();
+            return ValidationHelper.isValidRequired(value) ? ValidationResult.success() :
+                    ValidationResult.failed("The " + rule.getKey() + " field is required when " + String.join("/", rule.getParameters()) + " is present");
         }
 
-        return ValidationResult.failed("The " + rule.getKey() + " field is required when " + String.join("/", rule.getParameters()) + " is present.");
+        return ValidationResult.success();
     }
 }

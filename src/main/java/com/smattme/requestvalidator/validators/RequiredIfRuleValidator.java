@@ -42,7 +42,7 @@ public class RequiredIfRuleValidator implements RuleValidator {
         }
 
         //otherwise no need to validate so return true to pass it
-        return ValidationResult.failed("The " + rule.getKey() + " field is required when if " + parameters);
+        return ValidationResult.failed("The " + rule.getKey() + " field is required when if " + String.join(" = ", parameters));
 
     }
 }

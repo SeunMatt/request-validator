@@ -13,7 +13,7 @@ public class DigitRuleValidator implements RuleValidator {
      */
     @Override
     public ValidationResult isValid(Object value, Rule rule) {
-        if(value != null && value.toString().isEmpty() && value.toString().matches("[0-9]+")) {
+        if(value != null && !value.toString().isEmpty() && value.toString().matches("[0-9]+")) {
             return ValidationResult.success();
         }
         return ValidationResult.failed(rule.getKey() + " parameter requires only digit values");

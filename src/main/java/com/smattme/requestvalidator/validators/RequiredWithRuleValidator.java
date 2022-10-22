@@ -24,7 +24,7 @@ public class RequiredWithRuleValidator implements RuleValidator {
         if (ValidationHelper.allFieldExists(rule.getParameters(), rule.getJsonPathObject())) {
             //all the conditional fields passed the required test
             return ValidationHelper.isValidRequired(value) ? ValidationResult.success() :
-                    ValidationResult.failed("The " + rule.getKey() + " field is required when " + String.join("/", rule.getParameters()) + " is present");
+                    ValidationResult.failed("The " + rule.getKey() + " field is required when " + String.join(" and ", rule.getParameters()) + " is present");
         }
 
         //one or more of the conditional fields is/are not present. No need to validate this value
