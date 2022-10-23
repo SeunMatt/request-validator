@@ -2,10 +2,14 @@ package com.smattme.requestvalidator.validators;
 
 import com.smattme.requestvalidator.Rule;
 import com.smattme.requestvalidator.helpers.ValidationHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class RequiredIfRuleValidator implements RuleValidator {
+
+    private static final Logger logger = LoggerFactory.getLogger(RequiredIfRuleValidator.class);
 
 
     /**
@@ -37,12 +41,24 @@ public class RequiredIfRuleValidator implements RuleValidator {
             isRequired = false;
         }
 
-        if(isRequired && ValidationHelper.isValidRequired(value)) {
-            return ValidationResult.success();
+        if(isRequired) {
+            return ValidationHelper.isValidRequired(value) ? ValidationResult.success() :
+                    ValidationResult.failed("The " + rule.getKey() + " field is required when if " + String.join(" = ", parameters));
         }
 
         //otherwise no need to validate so return true to pass it
-        return ValidationResult.failed("The " + rule.getKey() + " field is required when if " + String.join(" = ", parameters));
+        return ValidationResult.success();
 
+    }
+
+    /**
+     * This rule does not honour optional
+     * It means, the {@link com.smattme.requestvalidator.RequestValidator} should still
+     * execute this rule even when the user supplied optional.
+     * @return false
+     */
+    @Override
+    public boolean isOptionalAllowed() {
+        return false;
     }
 }

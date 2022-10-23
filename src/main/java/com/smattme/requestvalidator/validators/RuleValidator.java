@@ -6,4 +6,8 @@ public interface RuleValidator {
 
     ValidationResult isValid(Object value, Rule rule);
 
+    default boolean isOptionalAllowed() {
+        return true;
+    }
+
 }

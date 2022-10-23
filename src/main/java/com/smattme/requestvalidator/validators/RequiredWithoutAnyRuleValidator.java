@@ -26,4 +26,15 @@ public class RequiredWithoutAnyRuleValidator implements RuleValidator {
         //skip validation since all of params does not exist
         return ValidationResult.success();
     }
+
+    /**
+     * This rule does not honour optional
+     * It means, the {@link com.smattme.requestvalidator.RequestValidator} should still
+     * execute this rule even when the user supplied optional.
+     * @return false
+     */
+    @Override
+    public boolean isOptionalAllowed() {
+        return false;
+    }
 }

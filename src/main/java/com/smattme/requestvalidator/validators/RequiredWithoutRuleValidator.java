@@ -25,4 +25,15 @@ public class RequiredWithoutRuleValidator implements RuleValidator {
         //one or more fields do exist so skip and return true
         return ValidationResult.success();
     }
+
+    /**
+     * This rule does not honour optional
+     * It means, the {@link com.smattme.requestvalidator.RequestValidator} should still
+     * execute this rule even when the user supplied optional.
+     * @return false
+     */
+    @Override
+    public boolean isOptionalAllowed() {
+        return false;
+    }
 }

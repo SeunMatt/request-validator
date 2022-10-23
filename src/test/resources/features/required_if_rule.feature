@@ -4,7 +4,7 @@ Feature: RequiredIf rule validator
   Scenario: Providing a value that satisfy the rules
     Given the following rules:
       | idType | optional              |
-      | bvn    | requiredIf:idType,BVN |
+      | bvn    | requiredIf:idType,BVN\|length:11 |
     And the following table request body:
       | idType | BVN         |
       | bvn    | 12345678901 |
@@ -15,7 +15,7 @@ Feature: RequiredIf rule validator
   Scenario: Providing a value that does meets the requirements
     Given the following rules:
       | idType | optional              |
-      | bvn    | requiredIf:idType,BVN |
+      | bvn    | requiredIf:idType,BVN\|length:11 |
     And the following table request body:
       | idType | BVN         |
       | SSN    | 12345678901 |
@@ -25,12 +25,22 @@ Feature: RequiredIf rule validator
 
     Given the following rules:
       | idType | optional              |
-      | bvn    | requiredIf:idType,BVN |
+      | bvn    | requiredIf:idType,BVN\|length:11 |
     And the following table request body:
       | idType | BVN |
-      | BVN    |     |
+      | bvn    |     |
     And validate request
     Then the returned errors should be:
       | The bvn field is required when if idType = BVN |
+
+    Given the following rules:
+      | idType | optional              |
+      | bvn    | requiredIf:idType,BVN\|length:11 |
+    And the following table request body:
+      | idType | BVN |
+      | bvn    | 123456    |
+    And validate request
+    Then the returned errors should be:
+      | bvn requires an exact length of 11 chars |
 
 

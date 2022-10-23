@@ -68,7 +68,7 @@ public class RequestValidator {
 				.filter(errors -> !errors.isEmpty())
 				.reduce((errorList1, errorList2) -> {
 					errorList1.addAll(errorList2);
-					return errorList2;
+					return errorList1;
 				}).orElse(Collections.emptyList());
 	}
 
@@ -116,10 +116,12 @@ public class RequestValidator {
 				: Arrays.asList(commaSeparatedRule.split("\\|"));
 		logger.trace("Evaluating rule list: {} for Key: {}", ruleList, key);
 
+		boolean optional = evaluateOptionalForRuleList(ruleList);
+
 		//now evaluate each rule for  the supplied value
 		return ruleList
 				.stream() //using parallelStream() here means the ruleList may be processed out of order, which is not desirable
-				.map(ruleString -> evaluateSingleRule(document, key, ruleString, ruleList.contains("optional")))
+				.map(ruleString -> evaluateSingleRule(document, key, ruleString, optional))
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
@@ -153,17 +155,7 @@ public class RequestValidator {
 
 		//let's extract the supplied value for the key under-processing
 		Object value = getValueForField(document, key);
-		logger.trace("Evaluating rule: {} for Key: {}. Value: {}", ruleString, key, value);
-
-		/*
-			if optional is part of the ruleList for this key, and the request object does not
-			have a non-null value for the key, return without performing any validation.
-			otherwise, proceed with the validation
-		 */
-		if (optional && !ValidationHelper.isValidRequired(value)) {
-			logger.trace("Skipping validation for key: {} because the value is null and it's optional", key);
-			return null;
-		}
+		logger.trace("Evaluating rule: {} for Key: {}. Value: {}, Optional: {}", ruleString, key, value, optional);
 
 		//convert ruleString to Rule object
 		Rule rule = Rule.parseRule(ruleString, key);
@@ -178,13 +170,30 @@ public class RequestValidator {
 			return null;
 		}
 
+
 		try {
+
 			//construct an instance of the validator
-			ValidationResult validationResult = ruleValidator.getConstructor().newInstance().isValid(value, rule);
+			RuleValidator validatorInstance = ruleValidator.getConstructor().newInstance();
+
+			/*
+				if optional is part of the ruleList for this key, and the request object does not
+				have a non-null value for the key, return without executing the validator.
+				If the validator does not allow optional, then the validator will still execute.
+				otherwise, proceed with the validation
+			 */
+			if (optional && validatorInstance.isOptionalAllowed() && !ValidationHelper.isValidRequired(value)) {
+				logger.trace("Skipping validation for key: {} because the value is null and it's optional", key);
+				return null;
+			}
+
+			ValidationResult validationResult = validatorInstance.isValid(value, rule);
 			if (!validationResult.isValid()) {
 				//if validation fails, add the error to the list
 				return validationResult.getError();
 			}
+
+
 		} catch (Exception e) {
 			throw new RequestValidatorException(e);
 		}
@@ -208,6 +217,28 @@ public class RequestValidator {
 			logger.error("Exception occurred while reading value for field: {}", key, e);
 			return null;
 		}
+	}
+
+
+	/**
+	 * 	optional is a boolean flag that will cause {@link #evaluateSingleRule} to not execute
+	 * 	the validator for a rule.
+	 * 	If optional = true AND the key has a null/empty value AND the validator allows optional then
+	 * 	the validator will not be executed.
+	 * 	requiredIf/requiredWithAny/requiredWith/requiredWithout/requiredWithoutAny
+	 * 	are included here because their presence is conditional and subsequent rules should only
+	 * 	be evaluated if the required condition is satisfied.
+	 * @param ruleList for a key
+	 * @return true or false
+	 */
+	protected static boolean evaluateOptionalForRuleList(List<String> ruleList) {
+		return ruleList.parallelStream().anyMatch(ruleString ->
+				ruleString.startsWith("optional") ||
+						ruleString.startsWith("requiredIf") ||
+						ruleString.startsWith("requiredWith") ||
+						ruleString.startsWith("requiredWithAny") ||
+						ruleString.startsWith("requiredWithout") ||
+						ruleString.startsWith("requiredWithoutAny"));
 	}
 
 

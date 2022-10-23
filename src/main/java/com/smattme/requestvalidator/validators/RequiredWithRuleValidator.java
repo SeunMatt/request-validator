@@ -30,4 +30,15 @@ public class RequiredWithRuleValidator implements RuleValidator {
         //one or more of the conditional fields is/are not present. No need to validate this value
         return ValidationResult.success();
     }
+
+    /**
+     * This rule does not honour optional
+     * It means, the {@link com.smattme.requestvalidator.RequestValidator} should still
+     * execute this rule even when the user supplied optional.
+     * @return false
+     */
+    @Override
+    public boolean isOptionalAllowed() {
+        return false;
+    }
 }
