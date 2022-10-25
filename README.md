@@ -28,7 +28,7 @@ Installation
 </dependency>
 ```
 
-Major External Dependencies
+External Dependencies
 ---------------------------
 - [JsonPath](https://github.com/json-path/JsonPath)
 - [Jackson's ObjectMapper](https://github.com/FasterXML/jackson)
@@ -41,17 +41,119 @@ The main entry point is the static `RequestValidator.validate()` method. This me
 
 user in a response format suitable for your app.
 
-```java
+Let's say we expect the following JSON request body in our controller:
 
+```json
+  {
+          "firstName": "Seun",
+          "lastName": "Matt",
+          "email": "seunmatt@example.com",
+          "dob": "23-10-2022",
+          "gender": "MALE",
+          "interests": [
+            "Java",
+            "SpringBoot"
+          ],
+          "preferences": {
+            "emailNotificationEnabled": true,
+            "frequency": 4
+          },
+          "kyc": {
+            "idType": "SSN",
+            "ssn": 123456789034,
+            "address": "Lagos, Nigeria"
+          },
+          "investmentAmount": 1000.50,
+          "investmentCurrency": "NGN"
+    }
 ```
+
+1. We will create a `Map<String, String>` with all the rules for the fields we want to validate:
+2. We will then invoke `RequestValidator.validate()` to get possible list of errors
+3. If the returned errors list is empty then, there's no exception. Otherwise, we will return 401 response with the errors
+
+```java
+@RestController
+public class UserController {
+
+
+    @PostMapping("/auth/signup")
+    public ResponseEntity<GenericResponse> signUp(@RequestBody Map<String, Object> request) {
+
+        Map<String, String> rules = new HashMap<>();
+        rules.put("firstName", "required|max:250");
+        rules.put("lastName", "required|max:250");
+        rules.put("email", "required|max:250|email");
+        rules.put("dob", "required||regex:[0-9]{2}-[0-9]{2}-[0-9]{4}");
+        rules.put("gender", "required|in:MALE,FEMALE");
+        rules.put("interests", "optional|array");
+        rules.put("preferences.emailNotificationEnabled", "optional|in:true,false");
+        rules.put("preferences.frequency", "optional|digit");
+        rules.put("kyc.idType", "required|in:BVN,SSN");
+        rules.put("kyc.bvn", "requiredIf:kyc.idType,BVN|length:11");
+        rules.put("kyc.ssn", "requiredIf:kyc.idType,SSN|length:12");
+        rules.put("kyc.address", "optional|max:250");
+        rules.put("investmentAmount", "optional|numeric");
+        rules.put("investmentCurrency", "requiredWith:investmentAmount|in:USD,NGN");
+
+        List<String> errors = RequestValidator.validate(request, rules);
+        if(!errors.isEmpty()) return ResponseEntity.badRequest().body(GenericResponse.genericValidationErrorsObj(errors));
+
+        //otherwise all is well, process the request
+        //userService.signUp()
+
+        return ResponseEntity.ok(GenericResponse.generic200ResponseObj("Sing up successful"));
+
+    }
+}
+```
+
+The request body can also be a plain JSON string or a POJO:
+
+```java
+@RestController
+public class LoginController {
+
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<GenericResponse> login(@RequestBody LoginRequest request) {
+
+        Map<String, String> rules = new HashMap<>();
+        rules.put("email", "required|email");
+        rules.put("password", "required");
+
+        List<String> errors = RequestValidator.validate(request, rules);
+        if(!errors.isEmpty()) return ResponseEntity.badRequest().body(GenericResponse.genericValidationErrorsObj(errors));
+
+        //otherwise all is well, process the request
+        //userService.signUp()
+
+        return ResponseEntity.ok(GenericResponse.generic200ResponseObj("Login successful"));
+
+    }
+}
+```
+
 
 The `RequestValidator.validate()` method uses the [JsonPath](https://github.com/json-path/JsonPath) library to navigate the JSON request body
 
 and retrieve the user provided value. The field's value is then pass through all the specified rules to check for violations if any.
 
-Because the project uses JsonPath, all the [json path operators](https://github.com/json-path/JsonPath#operators) also applies which makes this 
+Because the project uses JsonPath, all the [json path operators](https://github.com/json-path/JsonPath#operators) also applies which makes this
 
 library to be even more powerful.
+
+Combining Rules
+---------------
+You can specify more than one rule by combining the rules with a pipe `|` separator. For example, in the snippet above, the `email`
+
+field is `required` and can't be more than 250 chars and should be a valid `email` address. All those rules are combined using the `|` as 
+
+in `required|max:250|email`  
+
+
+**Please note that the `regex` rule requires a double pipe char `||` as a separator and should be the last rule when combined with others.
+This is to accommodate the potential presence of `|` in the regex pattern.**
 
 Spring Boot Environment
 ------------------
@@ -95,12 +197,12 @@ Adding custom rule validators
 
 Limitations
 -----------
-This library only works with JSON request body. Other Content-Types like XML are not yet supported
+This library only works with JSON request body. Other Content-Types like XML or plain text are not yet supported
 
 
 Architecture Diagram
 --------------------
-
+- TODO
 
 Contributions
 =============
