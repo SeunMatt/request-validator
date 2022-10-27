@@ -67,7 +67,7 @@ public class RequestValidator {
 				}).orElse(Collections.emptyList());
 	}
 
-	private static String convertObjectRequestToJsonString(Object requestBody) {
+	protected static String convertObjectRequestToJsonString(Object requestBody) {
 		ObjectMapper objectMapper = SpringContextAwareObjectMapperFactory.getObjectMapper();
 		try {
 			return objectMapper.writeValueAsString(requestBody);
