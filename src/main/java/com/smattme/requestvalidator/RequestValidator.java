@@ -241,5 +241,9 @@ public class RequestValidator {
 						ruleString.startsWith("requiredWithoutAny"));
 	}
 
+	public static void addNewRule(String rule, Class<? extends RuleValidator> ruleValidatorClass) {
+		ruleValidatorMap.put(rule, ruleValidatorClass);
+	}
+
 
 }
