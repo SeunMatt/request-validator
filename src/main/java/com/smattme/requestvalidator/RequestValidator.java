@@ -48,28 +48,32 @@ public class RequestValidator {
 
 
 	public static List<String> validate(Object target, Map<String, String> rules) {
-		ObjectMapper objectMapper = SpringContextAwareObjectMapperFactory.getObjectMapper();
-		try {
-			String jsonRequest = objectMapper.writeValueAsString(target);
-			return validate(jsonRequest, rules);
-		} catch (JsonProcessingException e) {
-			throw new RequestValidatorException(e);
-		}
+		String jsonRequest = convertObjectRequestToJsonString(target);
+		return validate(jsonRequest, rules, ruleValidatorMap);
 	}
 
-	public static List<String> validate(String jsonRequest, Map<String, String> rules) {
+	public static List<String> validate(String jsonRequest, Map<String, String> rules, Map<String, Class<? extends RuleValidator>> ruleValidatorMap) {
 
 		//convert target into Json Document
 		Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsonRequest);
 		Set<String> keys = rules.keySet();
 
 		return keys.parallelStream()
-				.map(key -> evaluateAllRulesForAKey(document, rules, key))
+				.map(key -> evaluateAllRulesForAKey(document, rules, key, ruleValidatorMap))
 				.filter(errors -> !errors.isEmpty())
 				.reduce((errorList1, errorList2) -> {
 					errorList1.addAll(errorList2);
 					return errorList1;
 				}).orElse(Collections.emptyList());
+	}
+
+	private static String convertObjectRequestToJsonString(Object requestBody) {
+		ObjectMapper objectMapper = SpringContextAwareObjectMapperFactory.getObjectMapper();
+		try {
+			return objectMapper.writeValueAsString(requestBody);
+		} catch (JsonProcessingException e) {
+			throw new RequestValidatorException(e);
+		}
 	}
 
 
@@ -92,9 +96,10 @@ public class RequestValidator {
 	 * @param document object representing the entire HTTP request body
 	 * @param rulesMap containing what rules to apply to what key
 	 * @param key the key under processing
+	 * @param ruleValidatorMap this is a map of rule => validatorClass
 	 * @return a list of errors and violations if any
 	 */
-	protected static List<String> evaluateAllRulesForAKey(Object document, Map<String, String> rulesMap, String key) {
+	protected static List<String> evaluateAllRulesForAKey(Object document, Map<String, String> rulesMap, String key, Map<String, Class<? extends RuleValidator>> ruleValidatorMap) {
 
 		/*
 			these are rulesMap (e.g. max:250|min:10) to be applied to the key (e.g. firstName) under processing.
@@ -121,7 +126,7 @@ public class RequestValidator {
 		//now evaluate each rule for  the supplied value
 		return ruleList
 				.stream() //using parallelStream() here means the ruleList may be processed out of order, which is not desirable
-				.map(ruleString -> evaluateSingleRule(document, key, ruleString, optional))
+				.map(ruleString -> evaluateSingleRule(document, key, ruleString, optional, ruleValidatorMap))
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
@@ -147,11 +152,12 @@ public class RequestValidator {
 	 * @param key the key under processing
 	 * @param optional a boolean indicating if this rule is a must or not.
 	 *                   If optional == true and the document does not contain a non-null value for this
-	 *                 	 key, then the function will return success since it's optional
+	 *                 	 key, then the function will return success since it's optional.
 	 *                 	optional keys are typically defined as rules.put("title", "optional|max:200");
+	 * @param ruleValidatorMap this is a map of rule => validatorClass
 	 * @return an error message if there's a violation, NULL otherwise
 	 */
-	protected static String evaluateSingleRule(Object document, String key, String ruleString, boolean optional) {
+	protected static String evaluateSingleRule(Object document, String key, String ruleString, boolean optional, Map<String, Class<? extends RuleValidator>> ruleValidatorMap) {
 
 		//let's extract the supplied value for the key under-processing
 		Object value = getValueForField(document, key);
@@ -239,10 +245,6 @@ public class RequestValidator {
 						ruleString.startsWith("requiredWithAny") ||
 						ruleString.startsWith("requiredWithout") ||
 						ruleString.startsWith("requiredWithoutAny"));
-	}
-
-	public static void addNewRule(String rule, Class<? extends RuleValidator> ruleValidatorClass) {
-		ruleValidatorMap.put(rule, ruleValidatorClass);
 	}
 
 
