@@ -1,6 +1,8 @@
 Request Validator
 =================
 
+[![SeunMatt](https://circleci.com/gh/SeunMatt/request-validator.svg?style=svg)](https://github.com/SeunMatt/request-validator)
+
 This is a utility library for validating JSON HTTP request body for Java web applications. 
 
 Request validator allows you to specify one or more rules that a request body must satisfy before 
