@@ -24,7 +24,7 @@ Installation
 <dependency>
     <groupId>com.smattme</groupId>
     <artifactId>request-validator</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
@@ -97,7 +97,14 @@ public class UserController {
         rules.put("investmentCurrency", "requiredWith:investmentAmount|in:USD,NGN");
 
         List<String> errors = RequestValidator.validate(request, rules);
-        if(!errors.isEmpty()) return ResponseEntity.badRequest().body(GenericResponse.genericValidationErrorsObj(errors));
+        if (!errors.isEmpty()) {
+            GenericResponse genericResponse = new GenericResponse();
+            genericResponse.setStatus(false);
+            genericResponse.setCode(HttpStatus.BAD_REQUEST.value());
+            genericResponse.setErrors(errors);
+            genericResponse.setMessage("Missing required parameter(s)");
+            return ResponseEntity.badRequest().body(genericResponse);
+        }
 
         //otherwise all is well, process the request
         //userService.signUp()
@@ -108,7 +115,7 @@ public class UserController {
 }
 ```
 
-The request body can also be a plain JSON string or a POJO:
+The request body can also be a plain JSON string or a Plain Old Java Object (POJO):
 
 ```java
 @RestController
@@ -123,10 +130,17 @@ public class LoginController {
         rules.put("password", "required");
 
         List<String> errors = RequestValidator.validate(request, rules);
-        if(!errors.isEmpty()) return ResponseEntity.badRequest().body(GenericResponse.genericValidationErrorsObj(errors));
+        if (!errors.isEmpty()) {
+            GenericResponse genericResponse = new GenericResponse();
+            genericResponse.setStatus(false);
+            genericResponse.setCode(HttpStatus.BAD_REQUEST.value());
+            genericResponse.setErrors(errors);
+            genericResponse.setMessage("Missing required parameter(s)");
+            return ResponseEntity.badRequest().body(genericResponse);
+        }
 
         //otherwise all is well, process the request
-        //userService.signUp()
+        //loginService.login()
 
         return ResponseEntity.ok(GenericResponse.generic200ResponseObj("Login successful"));
 
@@ -191,9 +205,65 @@ Below is a list of currently available rules for your use:
 
 Adding custom rule validators
 -----------------------------
-- Create a class that'll implement the `RuleValidator` interface and return a `ValidationResult`
-- Create a subclass of the `RequestValidator` class and append your rule to the `ruleValidatorMap` of the parent class
-- Use the custom sub-class in your applications
+- Create a class that'll implement the `RuleValidator` interface and return a `ValidationResult`:
+
+```java
+public class PrefixRuleValidator implements RuleValidator {
+    private static final String CUSTOM_PREFIX = "custom_";
+    @Override
+    public ValidationResult isValid(Object value, Rule rule) {
+        //ensure value is prefixed with custom_
+        return value != null && String.class.isAssignableFrom(value.getClass()) &&
+                value.toString().startsWith(CUSTOM_PREFIX)
+                ? ValidationResult.success()
+                : ValidationResult.failed(rule.getKey() + " should start with " + CUSTOM_PREFIX);
+    }
+}
+```
+
+- Create a subclass of the `RequestValidator` class and append your rule to the `ruleValidatorMap` of the parent class:
+
+```java
+public class CustomRequestValidator extends RequestValidator {
+
+    static {
+        ruleValidatorMap.put("customprefix", PrefixRuleValidator.class);
+    }
+
+    public static List<String> validate(Object target, Map<String, String> rules) {
+        String jsonRequest = convertObjectRequestToJsonString(target);
+        return validate(jsonRequest, rules, ruleValidatorMap);
+    }
+
+
+}
+```
+
+- Use the custom sub-class in your controller instead of the default `RequestValidator`:
+
+```java
+@RestController
+public class CustomPrefixController {
+
+    @PostMapping("/custom")
+    public ResponseEntity<GenericResponse> formCustomPrefix(@RequestBody Map<String, Object> request) {
+
+        Map<String, String> rules = Collections.singletonMap("objectType", "customprefix");
+
+        List<String> errors = CustomRequestValidator.validate(request, rules);
+        if(!errors.isEmpty()) {
+            GenericResponse genericResponse = new GenericResponse();
+            genericResponse.setStatus(false);
+            genericResponse.setCode(HttpStatus.BAD_REQUEST.value());
+            genericResponse.setErrors(errors);
+            genericResponse.setMessage("Missing required parameter(s)");
+            return ResponseEntity.badRequest().body(genericResponse);
+        }
+
+        return ResponseEntity.ok(GenericResponse.generic200ResponseObj("Operation successful"));
+    }
+}
+```
 
 Limitations
 -----------
