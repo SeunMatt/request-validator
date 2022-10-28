@@ -2,6 +2,7 @@ package com.smattme.requestvalidator;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smattme.requestvalidator.customvalidator.CustomRequestValidator;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DocStringType;
 import io.cucumber.java.en.And;
@@ -51,6 +52,11 @@ public class RuleTestStepDefinitions {
     @And("validate request")
     public void validateRequest() {
        errors = RequestValidator.validate(request, rules);
+    }
+
+    @And("validate custom request")
+    public void validateCustomRequest() {
+        errors = CustomRequestValidator.validate(request, rules);
     }
 
     @Then("no errors should be returned")
