@@ -274,9 +274,9 @@ Limitations
 This library only works with JSON request body. Other Content-Types like XML or plain text are not yet supported
 
 
-Architecture Diagram
---------------------
-- TODO
+Tutorials
+-------------
+- [https://smattme.com/blog/technology/how-to-validate-json-request-body-in-spring-boot](https://smattme.com/blog/technology/how-to-validate-json-request-body-in-spring-boot) 
 
 Contributions
 =============
