@@ -96,7 +96,7 @@ public class RequestValidator {
 	 * @param document object representing the entire HTTP request body
 	 * @param rulesMap containing what rules to apply to what key
 	 * @param key the key under processing
-	 * @param ruleValidatorMap this is a map of rule => validatorClass
+	 * @param ruleValidatorMap this is a map of {@code rule => validatorClass}
 	 * @return a list of errors and violations if any
 	 */
 	protected static List<String> evaluateAllRulesForAKey(Object document, Map<String, String> rulesMap, String key, Map<String, Class<? extends RuleValidator>> ruleValidatorMap) {
@@ -154,7 +154,7 @@ public class RequestValidator {
 	 *                   If optional == true and the document does not contain a non-null value for this
 	 *                 	 key, then the function will return success since it's optional.
 	 *                 	optional keys are typically defined as rules.put("title", "optional|max:200");
-	 * @param ruleValidatorMap this is a map of rule => validatorClass
+	 * @param ruleValidatorMap this is a map of {@code rule => validatorClass}
 	 * @return an error message if there's a violation, NULL otherwise
 	 */
 	protected static String evaluateSingleRule(Object document, String key, String ruleString, boolean optional, Map<String, Class<? extends RuleValidator>> ruleValidatorMap) {
