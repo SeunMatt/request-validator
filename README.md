@@ -28,7 +28,7 @@ Installation
 <dependency>
     <groupId>com.smattme</groupId>
     <artifactId>request-validator</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
