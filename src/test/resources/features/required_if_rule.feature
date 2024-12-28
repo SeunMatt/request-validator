@@ -42,5 +42,3 @@ Feature: RequiredIf rule validator
     And validate request
     Then the returned errors should be:
       | bvn requires an exact length of 11 chars |
-
-

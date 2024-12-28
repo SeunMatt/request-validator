@@ -18,4 +18,3 @@ Feature: Custom prefix rule validator
     And validate custom request
     Then the returned errors should be:
       | customField should start with custom_ |
-

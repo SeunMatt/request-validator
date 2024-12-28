@@ -94,7 +94,3 @@ Feature: Using one or more rules together to validate request
       | The kyc.ssn field is required when if kyc.idType = SSN |
       | kyc.address requires a maximum length of 5 chars |
       | The investmentCurrency field is required when investmentAmount is present |
-
-
-
-

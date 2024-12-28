@@ -5,17 +5,17 @@ Request Validator
 
 [![SeunMatt](https://circleci.com/gh/SeunMatt/request-validator.svg?style=svg)](https://github.com/SeunMatt/request-validator)
 
-This is a utility library for validating JSON HTTP request body for Java web applications. 
+This is a utility library for validating JSON HTTP request body for Java web applications.
 
-Request validator allows you to specify one or more rules that a request body must satisfy before 
+Request validator allows you to specify one or more rules that a request body must satisfy before
 
 it can be processed further in the controller.
 
 Major Advantages of Request Validator includes:
 
-- You can validate deeply nested data using simple dot notations 
+- You can validate deeply nested data using simple dot notations
 - You'll get ALL the violations at a time and not one after the other
-- You can provide more than one rule at the same time without littering your code with annotations 
+- You can provide more than one rule at the same time without littering your code with annotations
 - It's a simple plug-and-play that can work with any web framework, just invoke the validate method and you're good to go
 
 
@@ -41,7 +41,7 @@ How it works
 ------------
 The main entry point is the static `RequestValidator.validate()` method. This method does not raise an exception, rather it returns a
 
-`List<String>` of errors. If the list is empty, it means the request data is valid, otherwise, you should return the errors to your 
+`List<String>` of errors. If the list is empty, it means the request data is valid, otherwise, you should return the errors to your
 
 user in a response format suitable for your app.
 
@@ -165,9 +165,9 @@ Combining Rules
 ---------------
 You can specify more than one rule by combining the rules with a pipe `|` separator. For example, in the snippet above, the `email`
 
-field is `required` and can't be more than 250 chars and should be a valid `email` address. All those rules are combined using the `|` as 
+field is `required` and can't be more than 250 chars and should be a valid `email` address. All those rules are combined using the `|` as
 
-in `required|max:250|email`  
+in `required|max:250|email`
 
 
 **Please note that the `regex` rule requires a double pipe char `||` as a separator and should be the last rule when combined with others.
@@ -175,9 +175,9 @@ This is to accommodate the potential presence of `|` in the regex pattern.**
 
 Spring Boot Environment
 ------------------
-If the library is used in a Spring Boot (or generally a Spring Framework) environment, 
+If the library is used in a Spring Boot (or generally a Spring Framework) environment,
 
-the library will attempt to use the Jackson's `ObjectMapper` bean in the Spring's context if any. 
+the library will attempt to use the Jackson's `ObjectMapper` bean in the Spring's context if any.
 
 If none is found, it will simply instantiate another one.
 
@@ -277,11 +277,11 @@ This library only works with JSON request body. Other Content-Types like XML or 
 
 Tutorials
 -------------
-- [https://smattme.com/blog/technology/how-to-validate-json-request-body-in-spring-boot](https://smattme.com/blog/technology/how-to-validate-json-request-body-in-spring-boot) 
+- [https://smattme.com/blog/technology/how-to-validate-json-request-body-in-spring-boot](https://smattme.com/blog/technology/how-to-validate-json-request-body-in-spring-boot)
 
 Contributions
 =============
-Contributions are welcome. Please create a PR that targets the development branch. Also, do let the author know of what you're working on to 
+Contributions are welcome. Please create a PR that targets the development branch. Also, do let the author know of what you're working on to
 avoid duplicate effort
 
 Please use the Issues on Github to report any bugs you encountered while using the library or suggest improvements
