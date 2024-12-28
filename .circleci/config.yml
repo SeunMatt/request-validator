@@ -7,8 +7,11 @@ jobs:
     steps:
       - checkout
       - run: sudo apt update
-      - run: sudo apt install ruby-full
+      - run: sudo apt install ruby-full python3
       - run: ruby -v
+      - run: python3 --version
+      - run: pip3 install pre-commit==2.21.0
+      - run: pre-commit run --all-files
       - run:
           name: Build
           command: mvn -B -DskipTests clean package
