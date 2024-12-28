@@ -7,3 +7,9 @@ repos:
       - id: trailing-whitespace
       - id: no-commit-to-branch
         args: [ --branch, master, --branch, testing, --branch, production ]
+
+  - repo: https://github.com/SeunMatt/precommit4j
+    rev: v1.0.0
+    hooks:
+      - id: checkstyle
+        args: [ "-c", "google_checkstyle.xml" ]
