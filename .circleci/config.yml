@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/openjdk:8.0
+      - image: cimg/openjdk:11.0
     steps:
       - checkout
       - run: sudo apt update
