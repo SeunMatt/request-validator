@@ -10,17 +10,18 @@ public class InRuleValidator implements RuleValidator {
      * the parameters.
      * The validation will fail if the value is null
      * Usage: in:foo,bar,...
-     * @param rule the rule object
-     * @param value      value
+     *
+     * @param rule  the rule object
+     * @param value value
      * @return boolean
      */
     @Override
     public ValidationResult isValid(Object value, Rule rule) {
-        if(value != null && rule.getParameters().contains(value.toString())) {
+        if (value != null && rule.getParameters().contains(value.toString())) {
             return ValidationResult.success();
         }
 
-        return ValidationResult.failed("The selected " + rule.getKey() + " is invalid. " +
-                "(Valid " + rule.getKey() + ": " + String.join(", ", rule.getParameters()) + ")");
+        return ValidationResult.failed("The selected " + rule.getKey() + " is invalid. "
+                + "(Valid " + rule.getKey() + ": " + String.join(", ", rule.getParameters()) + ")");
     }
 }

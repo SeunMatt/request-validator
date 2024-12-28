@@ -12,7 +12,7 @@ public class ValidationHelper {
 
     public static boolean isValidRequired(Object value) {
 
-        if(value == null) {
+        if (value == null) {
             return false;
         }
 
@@ -32,7 +32,7 @@ public class ValidationHelper {
     public static Object getValueForField(Object document, String key) {
         try {
             return JsonPath.read(document, "$." + key);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Exception occurred while reading value for field: {}", key, e);
             return null;
         }
