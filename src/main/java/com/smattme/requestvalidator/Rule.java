@@ -11,7 +11,7 @@ public class Rule {
     private List<String> parameters;
 
     /*
-        this holds the entire request object and can be referenced
+        This holds the entire request object and can be referenced
         from individual validators
      */
     private Object jsonPathObject;
@@ -73,6 +73,7 @@ public class Rule {
      * The format for specifying validation rule and parameters follows an
      *  easy {rule}:{parameters} formatting convention. For instance the
      *  rule "max:3" states that the length of the value must not exceed 3 characters.
+     *
      * @param rule the string representation of the rule
      * @param requestKey this is the name of the property from the request.
      *                   E.g. {"email": "smatt@example.com"}, email is the request key
