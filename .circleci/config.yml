@@ -6,8 +6,8 @@ jobs:
       - image: cimg/openjdk:8.0
     steps:
       - checkout
-      - run: apt update
-      - run: apt install ruby-full
+      - run: sudo apt update
+      - run: sudo apt install ruby-full
       - run: ruby -v
       - run:
           name: Build
