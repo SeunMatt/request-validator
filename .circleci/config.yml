@@ -6,6 +6,9 @@ jobs:
       - image: cimg/openjdk:8.0
     steps:
       - checkout
+      - run: apt update
+      - run: apt install ruby-full
+      - run: ruby -v
       - run:
           name: Build
           command: mvn -B -DskipTests clean package
