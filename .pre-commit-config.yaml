@@ -12,4 +12,4 @@ repos:
     rev: v1.0.0
     hooks:
       - id: checkstyle
-        args: [ "-c", "google_checkstyle.xml" ]
+        args: [ "-c", "google_checks.xml" ]
