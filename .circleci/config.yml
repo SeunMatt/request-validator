@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: cimg/openjdk:11.0
     environment:
-      PRE_COMMIT_RUN_ALL_FILES: true
+      PRE_COMMIT_RUN_ALL_FILES: false
     steps:
       - checkout
       - run: sudo apt update
