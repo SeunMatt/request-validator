@@ -13,7 +13,7 @@ jobs:
       - run: ruby -v
       - run: python3 --version
       - run: pip3 --version
-      - run: pip3 install pre-commit==2.21.0
+      - run: pip3 install pre-commit
       - run: if $PRE_COMMIT_RUN_ALL_FILES; then pre-commit run --all-files; else pre-commit run --from-ref origin/HEAD --to-ref HEAD; fi
       - run:
           name: Build
