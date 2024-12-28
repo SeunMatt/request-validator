@@ -18,5 +18,3 @@ Feature: Numeric rule validator
     And validate request
     Then the returned errors should be:
       | amount parameter requires only numeric values |
-
-

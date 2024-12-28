@@ -18,5 +18,3 @@ Feature: In rule validator
     And validate request
     Then the returned errors should be:
       | The selected status is invalid. (Valid status: PENDING, ACTIVE, INACTIVE) |
-
-

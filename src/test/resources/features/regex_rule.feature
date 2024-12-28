@@ -18,5 +18,3 @@ Feature: Regex rule validator
     And validate request
     Then the returned errors should be:
       | Invalid pattern supplied for birthDate |
-
-

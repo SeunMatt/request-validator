@@ -26,5 +26,3 @@ Feature: Required rule validator
     And validate request
     Then the returned errors should be:
       | lastName is required |
-
-

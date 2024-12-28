@@ -18,5 +18,3 @@ Feature: Email rule validator
     And validate request
     Then the returned errors should be:
       | userEmail supplied is invalid |
-
-

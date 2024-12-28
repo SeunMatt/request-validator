@@ -32,5 +32,3 @@ Feature: ArrayNotEmpty rule validator
     And validate request
     Then the returned errors should be:
       | currencies supplied should be a non-empty array |
-
-

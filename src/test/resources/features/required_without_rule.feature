@@ -44,5 +44,3 @@ Feature: RequiredWithout rule validator
     And validate request
     Then the returned errors should be:
       | The fullName field is required when firstName and lastName is not present |
-
-
