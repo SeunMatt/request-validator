@@ -46,5 +46,3 @@ Feature: RequiredWith rule validator
     And validate request
     Then the returned errors should be:
       | The accountName field is required when accountNumber and bankCode is present |
-
-

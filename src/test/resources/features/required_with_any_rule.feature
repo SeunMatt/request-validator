@@ -40,5 +40,3 @@ Feature: RequiredWithAny rule validator
     And validate request
     Then the returned errors should be:
       | The lastName field is required when firstName/middleName is present |
-
-

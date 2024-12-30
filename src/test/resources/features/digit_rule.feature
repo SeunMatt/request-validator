@@ -26,5 +26,3 @@ Feature: Digit rule validator
     And validate request
     Then the returned errors should be:
       | size parameter requires only digit values |
-
-

@@ -26,5 +26,3 @@ Feature: Length rule validator
     And validate request
     Then the returned errors should be:
       | accountNumber requires an exact length of 10 chars |
-
-

@@ -1,0 +1,21 @@
+exclude: |
+  (?x)^(
+        .circleci\/.* |
+        .mvn\/.* |
+        mvnw*
+    )$
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: no-commit-to-branch
+        args: [--branch, master, --branch, testing, --branch, production]
+
+  - repo: https://github.com/SeunMatt/precommit4j
+    rev: v1.0.0
+    hooks:
+      - id: checkstyle
+        args: [ "-c", "google_checks.xml" ]

@@ -18,5 +18,3 @@ Feature: Min rule validator
     And validate request
     Then the returned errors should be:
       | firstName requires a min length of 20 chars |
-
-

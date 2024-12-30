@@ -18,5 +18,3 @@ Feature: Max rule validator
     And validate request
     Then the returned errors should be:
       | firstName requires a maximum length of 10 chars |
-
-

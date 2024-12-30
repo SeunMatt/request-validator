@@ -3,9 +3,15 @@ version: 2.1
 jobs:
   build-and-test:
     docker:
-      - image: cimg/openjdk:8.0
+      - image: cimg/openjdk:11.0
+    environment:
+      PRE_COMMIT_RUN_ALL_FILES: false
     steps:
       - checkout
+      - run: sudo apt update
+      - run: sudo apt install ruby-full python3-pip
+      - run: pip3 install pre-commit
+      - run: if $PRE_COMMIT_RUN_ALL_FILES; then pre-commit run --all-files; else pre-commit run --from-ref origin/HEAD --to-ref HEAD; fi
       - run:
           name: Build
           command: mvn -B -DskipTests clean package

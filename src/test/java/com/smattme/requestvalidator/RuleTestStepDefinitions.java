@@ -30,7 +30,8 @@ public class RuleTestStepDefinitions {
 
     @DocStringType(contentType = "json")
     public Map<String, Object> convertToMap(String docString) throws IOException {
-        return objectMapper.readValue(docString, new TypeReference<Map<String, Object>>() {});
+        return objectMapper.readValue(docString, new TypeReference<Map<String, Object>>() {
+        });
     }
 
 
@@ -51,7 +52,7 @@ public class RuleTestStepDefinitions {
 
     @And("validate request")
     public void validateRequest() {
-       errors = RequestValidator.validate(request, rules);
+        errors = RequestValidator.validate(request, rules);
     }
 
     @And("validate custom request")
